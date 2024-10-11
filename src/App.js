@@ -1,40 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
+import { Route, Routes, Navigate } from "react-router-dom";
+import Main from "./components/Main";
+import Signup from "./components/Singup";
+import Login from "./components/Login";
 
 function App() {
-  // State to store fetched data
-  const [data, setData] = useState(null);
+	const user = localStorage.getItem("token");
 
-  // Define the function to fetch data
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/api/data');
-      setData(response.data.message); // Store the fetched data in state
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  // Use useEffect to fetch data when the component mounts
-  useEffect(() => {
-    fetchData();
-  }, []); // The empty array ensures this only runs once when the component mounts
-
-  return (
-    <div>
-      <h1>Hello, World!</h1>
-      
-      {/* Render the data only if it's available */}
-      {data ? (
-        <div>
-          <h2>Fetched Data:</h2>
-          <p>{JSON.stringify(data)}</p> {/* Display the fetched data */}
-        </div>
-      ) : (
-        <p>Loading...</p> // Show a loading message while the data is being fetched
-      )}
-    </div>
-  );
+	return (
+		<Routes>
+			{user && <Route path="/" exact element={<Main/>} />}
+			<Route path="/signup" exact element={<Signup/>} />
+			<Route path="/login" exact element={<Login/>} />
+			<Route path="/" element={<Navigate replace to="/login" />} />
+		</Routes>
+	);
 }
 
 export default App;
