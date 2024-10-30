@@ -5,7 +5,11 @@ import { Card, CardContent } from "../ui/card"
 import { Home, Calendar, ShoppingCart, User, Instagram, Facebook, Linkedin, Twitter } from 'lucide-react'
 import Navbar from '../Navbar/navbar';
 import Footer from '../Footer/Footer';
-
+import styles from "./styles.module.css";
+import png1 from '../../images/image (2).png';
+import png2 from '../../images/image (4).png';
+import png3 from '../../images/image (5).png';
+import png4 from '../../images/image (6).png';
 
 const Main = () => {
   return (
@@ -17,15 +21,15 @@ const Main = () => {
       <main className="flex-grow">
         <section className="container mx-auto px-4 py-12 text-center">
           <div className="flex justify-center space-x-4">
-            <img src="/placeholder.svg?height=100&width=100" alt="Meal Plan" className="h-24 w-24" />
+          <img src={png1} alt="Grocery" className="h-24 w-24" />
             <div>
               <h1 className="text-4xl font-bold mb-4">Effortless Meal planning & Grocery Management</h1>
               <div className="flex justify-center space-x-2 mb-4">
                 <Input type="text" placeholder="Search recipes" className="max-w-sm" />
-                <Button>Search</Button>
+                <Button  className={styles.search}>Search</Button>
               </div>
             </div>
-            <img src="/placeholder.svg?height=100&width=100" alt="Grocery" className="h-24 w-24" />
+            <img src={png1} alt="Grocery" className="h-24 w-24" />
           </div>
         </section>
 
@@ -33,9 +37,9 @@ const Main = () => {
           <h2 className="text-2xl font-bold mb-8">How MakeYumMeal works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: "Step 1", description: "Customize your meal plan. Add recipes and schedule your meals with ease.", image: "/placeholder.svg?height=200&width=200" },
-              { title: "Step 2", description: "Browse recipes and select ingredients. Your perfect meal is just a click away.", image: "/placeholder.svg?height=200&width=200" },
-              { title: "Step 3", description: "Organize your shopping list. Track purchases and manage your cart effortlessly.", image: "/placeholder.svg?height=200&width=200" },
+              { title: "Step 1", description: "Customize your meal plan. Add recipes and schedule your meals with ease.", image: png3 },
+              { title: "Step 2", description: "Browse recipes and select ingredients. Your perfect meal is just a click away.", image: png2 },
+              { title: "Step 3", description: "Organize your shopping list. Track purchases and manage your cart effortlessly.", image: png1 },
             ].map((step, index) => (
               <Card key={index}>
                 <CardContent className="p-6 text-center">
@@ -60,7 +64,7 @@ const Main = () => {
             ].map((recipe, index) => (
               <Card key={index}>
                 <CardContent className="p-4">
-                  <img src={`/placeholder.svg?height=150&width=150`} alt={recipe.title} className="w-full h-32 object-cover mb-2" />
+                <img src={png4} alt="Grocery" className="h-24 w-24" />
                   <h3 className="font-bold text-sm">{recipe.title}</h3>
                   <p className="text-xs text-muted-foreground">{recipe.description}</p>
                 </CardContent>

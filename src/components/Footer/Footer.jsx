@@ -4,12 +4,12 @@ import { Instagram, Facebook, Linkedin, Twitter } from 'lucide-react';
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Card, CardContent } from "../ui/card"
-import styles from "./footer.css";
+import styles from "./footer.module.css";
 //import styles from "./styles.module.css";
 
 const Footer = () => {
   return (
-    <footer className="bg-orange-400 text-white">
+    <footer className="bg-orange-400 text-black">
         <div className="container mx-auto px-4 py-8" style={{padding: 0 + 'rem'}}>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-4">
@@ -19,7 +19,7 @@ const Footer = () => {
               <Linkedin />
               <Twitter />
             </div>
-            <Button variant="outline" className={styles.contact} >Contact Us</Button>
+            <Button className={styles.test1} variant="outline"  >Contact Us</Button>
           </div>
           <nav className="flex space-x-4 mb-4">
             <a href="#" className="hover:underline">Team</a>

@@ -25,3 +25,21 @@
 	cursor: pointer;
 	margin-right: 20px;
 }
+.search {
+	cursor: pointer;
+	top: 642px;
+	left: 918px;
+	width: 85px;
+	height: 40px;
+	padding: 0px 8px;
+	border: 0;
+	box-sizing: border-box;
+	border-radius: 12px;
+	background-color: #ff9f21;
+	color: #ffffff;
+	font-size: 18px;
+	font-family: 'Poppins';
+	font-weight: 600;
+	line-height: 28px;
+	outline: none;
+}
