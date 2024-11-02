@@ -1,17 +1,20 @@
-import React from 'react';
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Card, CardContent } from "../ui/card"
-import { Home, Calendar, ShoppingCart, User, Instagram, Facebook, Linkedin, Twitter } from 'lucide-react'
-import Navbar from '../Navbar/navbar';
-import Footer from '../Footer/Footer';
+import {React,useEffect, useState} from 'react';
+import { Card, CardContent } from "../../components/ui/card"
+import Navbar from '../../components/Navbar/navbar';
+import Footer from '../../components/Footer/Footer';
 import styles from "./styles.module.css";
-import png1 from '../../images/image (2).png';
-import png2 from '../../images/image (4).png';
-import png3 from '../../images/image (5).png';
-import png4 from '../../images/image (6).png';
-
+import { png1,png2,png3,png4 } from '../../index';
+import SearchBar from "../../components/Search/SearchBar"
+import SearchResults from "../../components/Search/SearchResults";
+import CategoryWrapper from '../category/CategoryWrapper';
 const Main = () => {
+
+  const [searchResults, setSearchResults] = useState([]);
+
+  // Function to handle search and update results
+  const handleSearchResults = (results) => {
+    setSearchResults(results);
+  };
   return (
     <div className="min-h-screen flex flex-col">
     <header>
@@ -24,10 +27,11 @@ const Main = () => {
           <img src={png1} alt="Grocery" className="h-24 w-24" />
             <div>
               <h1 className="text-4xl font-bold mb-4">Effortless Meal planning & Grocery Management</h1>
-              <div className="flex justify-center space-x-2 mb-4">
-                <Input type="text" placeholder="Search recipes" className="max-w-sm" />
-                <Button  className={styles.search}>Search</Button>
+              <div className="flex justify-center space-x-2 mb-4" >
+              <SearchBar onSearchResults={handleSearchResults} />
               </div>
+              {searchResults.length > 0 && <SearchResults recipes={searchResults} />}
+              
             </div>
             <img src={png1} alt="Grocery" className="h-24 w-24" />
           </div>
