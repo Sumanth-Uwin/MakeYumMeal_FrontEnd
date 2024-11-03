@@ -1,37 +1,67 @@
-import {React,useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "../../components/ui/card"
 import Navbar from '../../components/Navbar/navbar';
 import Footer from '../../components/Footer/Footer';
-import styles from "./styles.module.css";
-import { png1,png2,png3,png4 } from '../../index';
+import { png1, png2, png3, png4 } from '../../index';
 import SearchBar from "../../components/Search/SearchBar"
 import SearchResults from "../../components/Search/SearchResults";
-import CategoryWrapper from '../category/CategoryWrapper';
-const Main = () => {
 
+const Main = () => {
   const [searchResults, setSearchResults] = useState([]);
+  const [trendingRecipes, setTrendingRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const API_KEY = 'c7be5e80b9d74f42a80086a83b8305fd'; // Replace with your actual API key
 
   // Function to handle search and update results
   const handleSearchResults = (results) => {
     setSearchResults(results);
   };
+  const handleRecipeClick = (recipeId) => {
+  navigate(`/recipe/${recipeId}`);
+};
+
+  useEffect(() => {
+    const fetchTrendingRecipes = async () => {
+      try {
+        const response = await fetch(
+          `https://api.spoonacular.com/recipes/random?number=5&apiKey=${API_KEY}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch trending recipes');
+        }
+        const data = await response.json();
+        setTrendingRecipes(data.recipes);
+      } catch (err) {
+        setError('Failed to load trending recipes. Please try again later.');
+        console.error('Error fetching trending recipes:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendingRecipes();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
-    <header>
-      <Navbar />
-    </header>
+      <header>
+        <Navbar />
+      </header>
 
       <main className="flex-grow">
         <section className="container mx-auto px-4 py-12 text-center">
           <div className="flex justify-center space-x-4">
-          <img src={png1} alt="Grocery" className="h-24 w-24" />
+            <img src={png1} alt="Grocery" className="h-24 w-24" />
             <div>
               <h1 className="text-4xl font-bold mb-4">Effortless Meal planning & Grocery Management</h1>
               <div className="flex justify-center space-x-2 mb-4" >
-              <SearchBar onSearchResults={handleSearchResults} />
+                <SearchBar onSearchResults={handleSearchResults} />
               </div>
               {searchResults.length > 0 && <SearchResults recipes={searchResults} />}
-              
             </div>
             <img src={png1} alt="Grocery" className="h-24 w-24" />
           </div>
@@ -58,23 +88,33 @@ const Main = () => {
 
         <section className="container mx-auto px-4 py-12">
           <h2 className="text-2xl font-bold mb-8">Trending Recipes</h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[
-              { title: "Mixed Berry Smoothie", description: "A refreshing blend of berries for a healthy start." },
-              { title: "Gourmet Burger", description: "Juicy burger with cheese and crispy bacon." },
-              { title: "Sushi Rolls", description: "Fresh salmon and avocado sushi rolls." },
-              { title: "Vegan Chili", description: "Hearty chili with beans and corn." },
-              { title: "Chocolate Cake", description: "Rich chocolate cake with creamy frosting." },
-            ].map((recipe, index) => (
-              <Card key={index}>
-                <CardContent className="p-4">
-                <img src={png4} alt="Grocery" className="h-24 w-24" />
-                  <h3 className="font-bold text-sm">{recipe.title}</h3>
-                  <p className="text-xs text-muted-foreground">{recipe.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {loading && <p>Loading trending recipes...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+          {!loading && !error && (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {trendingRecipes.map((recipe, index) => (
+                <Card 
+                  key={index} 
+                  className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                  onClick={() => handleRecipeClick(recipe.id)}
+                >
+                  <CardContent className="p-4">
+                    <img 
+                      src={recipe.image || png4} 
+                      alt={recipe.title} 
+                      className="w-full h-24 object-cover mb-2" 
+                    />
+                    <h3 className="font-bold text-sm">{recipe.title}</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {recipe.summary 
+                        ? `${recipe.summary.split(' ').slice(0, 10).join(' ')}...` 
+                        : 'No description available'}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="container mx-auto px-4 py-12">
@@ -96,7 +136,7 @@ const Main = () => {
 
       <Footer />
     </div>
-  )
+  );
 };
 
 export default Main;
