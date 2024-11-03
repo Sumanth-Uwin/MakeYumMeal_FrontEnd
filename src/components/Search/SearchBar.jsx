@@ -4,7 +4,7 @@ import { Input } from "../../components/ui/input";
 import styles from "./styles.module.css";
 
 function SearchBar({ onSearchResults }) {
-  const [query, setQuery] = useState('egg');
+  const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {

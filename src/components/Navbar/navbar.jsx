@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home as HomeIcon, Calendar as CalendarIcon, ShoppingCart as ShoppingCartIcon, User as UserIcon } from 'lucide-react';
+import { Home as HomeIcon, Calendar as CalendarIcon, ShoppingCart as ShoppingCartIcon, User as UserIcon, Search as Search } from 'lucide-react';
 import Icon from '../Icon/icon';
 
 const Navbar = () => {
@@ -14,6 +14,9 @@ const Navbar = () => {
       <nav className="flex space-x-4">
         <a href="/" aria-label="Home" title="Home">
           <HomeIcon className="h-6 w-6" />
+        </a>
+        <a href="/search" aria-label="Home" title="Home">
+          <Search className="h-6 w-6" />
         </a>
         <a href="/calendar" aria-label="Calendar" title="Calendar">
           <CalendarIcon className="h-6 w-6" />
