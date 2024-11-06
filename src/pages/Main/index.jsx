@@ -102,14 +102,17 @@ const Main = () => {
                     <img 
                       src={recipe.image || png4} 
                       alt={recipe.title} 
-                      className="w-full h-24 object-cover mb-2" 
+                      className="w-full h-24 object-cover mb-2"
                     />
                     <h3 className="font-bold text-sm">{recipe.title}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {recipe.summary 
-                        ? `${recipe.summary.split(' ').slice(0, 10).join(' ')}...` 
-                        : 'No description available'}
-                    </p>
+                    <p
+                      className="mb-4"
+                      dangerouslySetInnerHTML={{
+                        __html: recipe.summary
+                          ? `${recipe.summary.split(' ').slice(0, 10).join(' ')}...`
+                          : 'No description available',
+                      }}
+                    />
                   </CardContent>
                 </Card>
               ))}
