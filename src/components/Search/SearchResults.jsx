@@ -1,8 +1,11 @@
-// src/components/Search/SearchResults.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const SearchResults = ({ recipes }) => {
+const SearchResults = ({ recipes = [] }) => {
+  if (!recipes.length) {
+    return <p className="text-center mt-4">No recipes found. Try a different search term!</p>;
+  }
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
       {recipes.map((recipe) => (

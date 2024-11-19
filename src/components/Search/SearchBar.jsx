@@ -21,7 +21,11 @@ function SearchBar({ onSearchResults }) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      onSearchResults(data.results); // Pass results back to Main component
+      if (onSearchResults && typeof onSearchResults === 'function') {
+        onSearchResults(data); // Pass results back to Main component
+      } else {
+        console.warn('onSearchResults prop is not a function.');
+      }
     } catch (error) {
       console.error('Error fetching recipes:', error);
     } finally {
