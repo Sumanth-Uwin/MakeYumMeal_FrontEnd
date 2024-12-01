@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import RecipeDetail from "./pages/RecipeDetails/RecipeDetail";
 import SearchRecipes from "./pages/SearchRecipes/SearchRecipes";
 import CategoryPage from './pages/category/CategoryPage';
+import ShoppingList from "./pages/shoppingList/ShoppingList";
 
 function App() {
 	const user = localStorage.getItem("token");
@@ -17,6 +18,7 @@ function App() {
 					<Route path="/" element={<Main />} />
 					<Route path="/home" element={<Main />} />
 					<Route path="/search" element={<SearchRecipes />} />
+					<Route path="/cart" element={<ShoppingList />} />
 					<Route path="/recipe/:id" element={<RecipeDetail />} />
 				</>
 			) : (
