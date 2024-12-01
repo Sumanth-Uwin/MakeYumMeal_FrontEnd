@@ -20,6 +20,7 @@ const Login = () => {
       const url = "http://localhost:3100/api/auth";
       const { data: res } = await axios.post(url, data);
       localStorage.setItem("token", res.data);
+      localStorage.setItem("user", JSON.stringify({ userId: res.data.userId, email: res.data.email }));
       window.location = "/";
     } catch (error) {
       if (
