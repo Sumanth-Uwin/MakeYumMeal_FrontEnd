@@ -1,19 +1,37 @@
-
 import { Route, Routes, Navigate } from "react-router-dom";
-import Main from "./components/Main";
-import Signup from "./components/Singup";
-import Login from "./components/Login";
-import Navbar from "./components/Navbar/navbar";
+import Main from "./pages/Main";
+import Signup from "../src/pages/Singup/index";
+import Login from "./pages/Login";
+import RecipeDetail from "./pages/RecipeDetails/RecipeDetail";
+import SearchRecipes from "./pages/SearchRecipes/SearchRecipes";
+import CategoryPage from './pages/category/CategoryPage';
+import ShoppingList from "./pages/shoppingList/ShoppingList";
 
 function App() {
 	const user = localStorage.getItem("token");
 
 	return (
 		<Routes>
-			{user && <Route path="/" exact element={<Main/>} />}
-			<Route path="/signup" exact element={<Signup/>} />
-			<Route path="/login" exact element={<Login/>} />
-			<Route path="/" element={<Navigate replace to="/login" />} />
+			{/* Protected Routes */}
+			{user ? (
+				<>
+					<Route path="/" element={<Main />} />
+					<Route path="/home" element={<Main />} />
+					<Route path="/search" element={<SearchRecipes />} />
+					<Route path="/cart" element={<ShoppingList />} />
+					<Route path="/recipe/:id" element={<RecipeDetail />} />
+				</>
+			) : (
+				<Route path="/" element={<Navigate replace to="/login" />} />
+			)}
+
+			{/* Public Routes */}
+			<Route path="/signup" element={<Signup />} />
+			<Route path="/login" element={<Login />} />
+			<Route path="/categories/:category" element={<CategoryPage />} />
+
+			{/* Catch-all Redirect for Unauthorized Access */}
+			<Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
 		</Routes>
 	);
 }
