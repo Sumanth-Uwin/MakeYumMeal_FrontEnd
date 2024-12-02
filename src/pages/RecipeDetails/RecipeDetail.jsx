@@ -54,6 +54,8 @@ const RecipeDetail = () => {
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [saved, setSaved] = useState(false);  // Track if the recipe is saved
+  const [notes, setNotes] = useState('');  // Track the notes
+  const [isNotesOpen, setIsNotesOpen] = useState(false); // Track whether notes popup is open
   const speechSynthesisRef = useRef(null);
   const { user } = useUser(); // Get user from context
   const loggedInUserId = user?.userId; // Get logged-in user ID
@@ -129,6 +131,46 @@ const RecipeDetail = () => {
     }
   };
 
+  // Handle Notes popup open/close
+  const handleNotesToggle = () => {
+    setIsNotesOpen(!isNotesOpen);
+  };
+
+  // Save notes
+  const handleSaveNotes = async () => {
+    try {
+      if (!loggedInUserId) {
+        alert("You must be logged in to save notes.");
+        return;
+      }
+  
+      const userId = loggedInUserId;
+  
+      const response = await axios.post("http://localhost:3100/api/notes/create", {
+        recipeId: id,
+        title: recipe.title,
+        content: notes,
+        userId: userId,
+      });
+  
+      if (response.status === 200 || response.status === 201) {
+        alert("Notes saved successfully!");
+  
+        // Delay closing the popup to allow the alert to appear first
+        setTimeout(() => {
+          setIsNotesOpen(false); // Close the notes popup
+        }, 1000); // Close the popup after 1 second (you can adjust the delay)
+      }
+    } catch (error) {
+      console.error("Error saving notes:", error);
+      alert("Failed to save notes. Please try again.");
+    }
+  };
+  
+  
+  
+  
+
   if (loading) return <p>Loading...</p>;
   if (!recipe) return <p>No recipe found.</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -149,7 +191,11 @@ const RecipeDetail = () => {
               <BookmarkIcon className="w-4 h-4" />
               {saved ? "Saved" : "Save Recipe"}
             </Button>
-            <Button variant="secondary" className="flex items-center gap-2">
+            <Button 
+              variant="secondary" 
+              className="flex items-center gap-2"
+              onClick={handleNotesToggle} // Open notes popup
+            >
               <FileTextIcon className="w-4 h-4" />
               Notes
             </Button>
@@ -207,45 +253,37 @@ const RecipeDetail = () => {
             </ol>
           </div>
         </div>
+      </div>
 
-        {/* Shopping Cart Section */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4">Add to Shopping Cart</h2>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Checkbox 
-                id="select-all"
-                checked={selectedIngredients.length === recipe.extendedIngredients?.length}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedIngredients(recipe.extendedIngredients.map(i => i.id));
-                  } else {
-                    setSelectedIngredients([]);
-                  }
-                }}
-              />
-              <label htmlFor="select-all" className="font-medium">Select All</label>
+      {/* Notes Popup */}
+      {isNotesOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h3 className="text-xl font-semibold mb-4">Add Your Notes</h3>
+            <textarea 
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              rows="4"
+            />
+            <div className="flex justify-end gap-4 mt-4">
+              <Button 
+                variant="destructive" 
+                onClick={() => setIsNotesOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={handleSaveNotes}
+              >
+                Save Notes
+              </Button>
             </div>
-            
-            {recipe.extendedIngredients?.map((ingredient) => (
-              <div key={ingredient.id} className="flex items-center gap-2">
-                <Checkbox 
-                  id={`ingredient-${ingredient.id}`}
-                  checked={selectedIngredients.includes(ingredient.id)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setSelectedIngredients([...selectedIngredients, ingredient.id]);
-                    } else {
-                      setSelectedIngredients(selectedIngredients.filter(id => id !== ingredient.id));
-                    }
-                  }}
-                />
-                <label htmlFor={`ingredient-${ingredient.id}`} className="text-sm">{ingredient.original}</label>
-              </div>
-            ))}
           </div>
         </div>
-      </div>
+      )}
+
       <Footer />
     </div>
   );

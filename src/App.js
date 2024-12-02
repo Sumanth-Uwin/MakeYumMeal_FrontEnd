@@ -8,6 +8,7 @@ import CategoryPage from './pages/category/CategoryPage';
 import ShoppingList from "./pages/shoppingList/ShoppingList";
 import Profile from "./pages/Profile/Profile";
 import SavedRecipes from './pages/SavedRecipes/SavedRecipes';
+import SavedNotes from './pages/NotesPage/NotesPage'
 
 function App() {
 	const user = localStorage.getItem("token");
@@ -23,6 +24,7 @@ function App() {
 					<Route path="/cart" element={<ShoppingList />} />
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/SavedRecipes" element={<SavedRecipes />} />
+					<Route path="/SavedNotes" element={<SavedNotes />} />
 					<Route path="/recipe/:id" element={<RecipeDetail />} />
 				</>
 			) : (

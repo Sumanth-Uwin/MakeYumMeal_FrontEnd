@@ -17,7 +17,9 @@ const Profile = () => {
   const handleViewRecipes = () => {
     navigate('/SavedRecipes'); // Navigate to the SavedRecipes page
   };
-
+  const handleSavedNotes = () => {
+    navigate('/SavedNotes'); // Navigate to the SavedRecipes page
+  };
   return (
     <div>
       {/* Navbar */}
@@ -48,9 +50,9 @@ const Profile = () => {
               <CardTitle>Saved Notes</CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={handleSavedNotes}>
                 <BookOpen className="mr-2" />
-                View Notes
+                View Notes 
               </Button>
             </CardContent>
           </Card>
