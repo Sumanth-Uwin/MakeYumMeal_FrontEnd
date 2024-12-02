@@ -24,9 +24,6 @@ const Navbar = () => {
         <a href="/search" aria-label="Search">
           <SearchIcon className="h-6 w-6" />
         </a>
-        <a href="/calendar" aria-label="Calendar">
-          <CalendarIcon className="h-6 w-6" />
-        </a>
         <a href="/cart" aria-label="Shopping Cart">
           <ShoppingCartIcon className="h-6 w-6" />
         </a>
@@ -44,10 +41,6 @@ const Navbar = () => {
                 <UserIcon className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 cursor-pointer">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 cursor-pointer" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />

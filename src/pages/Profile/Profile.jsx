@@ -6,6 +6,7 @@ import { BookOpen } from 'lucide-react'; // Icons for the buttons
 import Navbar from '../../components/Navbar/navbar';
 import { useUser } from '../../UserContext'; // Importing user context
 import { useNavigate } from 'react-router-dom';
+import Footer from "../../components/Footer/Footer";
 
 const Profile = () => {
   const { user } = useUser(); // Fetch user from context
