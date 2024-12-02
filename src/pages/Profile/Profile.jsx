@@ -5,6 +5,7 @@ import { Avatar } from "../../components/ui/avatar"; // Assuming avatar componen
 import { BookOpen } from 'lucide-react'; // Icons for the buttons
 import Navbar from '../../components/Navbar/navbar';
 import { useUser } from '../../UserContext'; // Importing user context
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user } = useUser(); // Fetch user from context
@@ -12,6 +13,10 @@ const Profile = () => {
   if (!user) {
     return <p>Loading...</p>; // Or any loading state until the user is available
   }
+  const navigate = useNavigate();
+  const handleViewRecipes = () => {
+    navigate('/SavedRecipes'); // Navigate to the SavedRecipes page
+  };
 
   return (
     <div>
@@ -45,7 +50,7 @@ const Profile = () => {
             <CardContent>
               <Button variant="outline" className="w-full">
                 <BookOpen className="mr-2" />
-                View Notes ({user.savedNotesCount || 0})
+                View Notes
               </Button>
             </CardContent>
           </Card>
@@ -55,9 +60,9 @@ const Profile = () => {
               <CardTitle>Saved Recipes</CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={handleViewRecipes}>
                 <BookOpen className="mr-2" />
-                View Recipes ({user.savedRecipesCount || 0})
+                View Recipes 
               </Button>
             </CardContent>
           </Card>

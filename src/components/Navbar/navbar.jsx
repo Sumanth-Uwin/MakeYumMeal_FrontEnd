@@ -38,7 +38,7 @@ const Navbar = () => {
               <UserIcon className="h-6 w-6" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-40">
+          <DropdownMenuContent className="w-40 bg-white shadow-lg rounded-md">
             <DropdownMenuItem className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 cursor-pointer">
               <a href="/profile" className="flex items-center space-x-2">
                 <UserIcon className="mr-2 h-4 w-4" />

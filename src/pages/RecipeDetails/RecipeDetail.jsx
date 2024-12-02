@@ -7,6 +7,7 @@ import { Checkbox } from "../../components/ui/checkbox";
 import { BookmarkIcon, VolumeXIcon, FileTextIcon } from 'lucide-react';
 import Navbar from '../../components/Navbar/navbar';
 import { useUser } from '../../UserContext';
+import Footer from "../../components/Footer/Footer";
 
 const apiKeys = [
   process.env.REACT_APP_SPOONACULAR_KEY1,
@@ -245,6 +246,7 @@ const RecipeDetail = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
