@@ -1,38 +1,111 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Button } from "../../components/ui/button"
-import { Card } from "../../components/ui/card"
-import { Checkbox } from "../../components/ui/checkbox"
-import { ScrollArea } from "../../components/ui/scroll-area"
-import { BookmarkIcon, Volume2Icon, FileTextIcon, ChevronDown, X } from 'lucide-react';
+import { Button } from "../../components/ui/button";
+import { Card } from "../../components/ui/card";
+import { Checkbox } from "../../components/ui/checkbox";
+import { BookmarkIcon, Volume2Icon, FileTextIcon } from 'lucide-react';
 import Navbar from '../../components/Navbar/navbar';
+import { useUser } from '../../UserContext';
+
+const apiKeys = [
+  process.env.REACT_APP_SPOONACULAR_KEY1,
+  process.env.REACT_APP_SPOONACULAR_KEY2,
+  process.env.REACT_APP_SPOONACULAR_KEY3,
+  process.env.REACT_APP_SPOONACULAR_KEY4,
+  process.env.REACT_APP_SPOONACULAR_KEY5,
+  process.env.REACT_APP_SPOONACULAR_KEY6,
+  process.env.REACT_APP_SPOONACULAR_KEY7,
+  process.env.REACT_APP_SPOONACULAR_KEY8
+];
+
+// Function to fetch recipe details with multiple API keys
+const fetchWithMultipleKeys = async (url) => {
+  for (let key of apiKeys) {
+    try {
+      const response = await axios.get(url, {
+        params: { apiKey: key },
+      });
+
+      // If successful, return the response data
+      if (response.status === 200) {
+        console.log("Fetched data successfully with API Key:", key);
+        return response.data;
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.warn(`API Key ${key} failed (Unauthorized). Trying the next one.`);
+      } else {
+        console.error("Error fetching data:", error.message);
+      }
+    }
+  }
+
+  // If all API keys fail, throw an error
+  throw new Error("All API keys failed.");
+};
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [error, setError] = useState(null);
 
-  const API_KEY = 'c7be5e80b9d74f42a80086a83b8305fd'; // Replace with your actual API key
+  // Get the logged-in userId from the context (assuming it's provided by your useUser hook)
+  const { user } = useUser();
+  console.log(user)
+  const loggedInUserId = user?.userId; // Replace with actual user ID or get from context
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`);
-        setRecipe(response.data);
+        setLoading(true);
+        setError(null);
+
+        const url = `https://api.spoonacular.com/recipes/${id}/information`;
+        const data = await fetchWithMultipleKeys(url);
+        setRecipe(data);
       } catch (error) {
         console.error("Error fetching recipe details:", error);
+        setError("Unable to fetch recipe details. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchRecipe();
-  }, [id, API_KEY]);
+  }, [id]);
+
+  // Handle adding selected ingredients to shopping list
+  const handleAddToShoppingList = async () => {
+    try {
+      const selectedItems = recipe.extendedIngredients.filter((ingredient) =>
+        selectedIngredients.includes(ingredient.id)
+      );
+
+      // Prepare the selected ingredients in the required format
+      const formattedIngredients = selectedItems.map((ingredient) => ({
+        name: ingredient.original,
+        quantity: 1,
+        ingredientId: ingredient.id,
+      }));
+
+      // Post the request to the backend
+      const response = await axios.post("http://localhost:3100/api/shoppingList/add", {
+        userId: loggedInUserId, // Ensure this is the actual logged-in user's ID
+        selectedIngredients: formattedIngredients,
+      });
+
+      alert("Ingredients added to shopping list!");
+    } catch (error) {
+      console.error("Error adding ingredients:", error.response ? error.response.data : error.message);
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (!recipe) return <p>No recipe found.</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -129,14 +202,13 @@ const RecipeDetail = () => {
             ))}
           </div>
           
-          <Button className="mt-4 w-full">Add to shopping list</Button>
+          <Button className="mt-4 w-full" onClick={handleAddToShoppingList}>Add to shopping list</Button>
         </div>
 
         {/* Nutrition Facts */}
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Nutrition Facts</h2>
-          <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: recipe.summary }}>
-          </p>
+          <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: recipe.summary }} />
         </div>
       </div>
     </div>
