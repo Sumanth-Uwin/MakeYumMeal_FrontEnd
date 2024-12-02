@@ -5,9 +5,10 @@ import Icon from '../Icon/icon';
 
 const Navbar = () => {
   const handleLogout = () => {
-		localStorage.removeItem("token");
-		window.location.reload();
-	};
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   return (
     <header className="container mx-auto p-4 flex justify-between items-center">
       <div className="flex items-center space-x-2">
@@ -29,18 +30,20 @@ const Navbar = () => {
         <a href="/cart" aria-label="Shopping Cart">
           <ShoppingCartIcon className="h-6 w-6" />
         </a>
-        
+
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <a href="/profile" aria-label="User Profile" className="cursor-pointer">
+            <button aria-label="User Profile" className="cursor-pointer">
               <UserIcon className="h-6 w-6" />
-            </a>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-40">
             <DropdownMenuItem className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 cursor-pointer">
-              <UserIcon className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <a href="/profile" className="flex items-center space-x-2">
+                <UserIcon className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </a>
             </DropdownMenuItem>
             <DropdownMenuItem className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 hover:text-blue-600 cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
-import { Card } from "../../components/ui/card"
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Card } from "../../components/ui/card";
 import png1 from '../../images/image (2).png';
 
 const Login = () => {
@@ -19,9 +19,14 @@ const Login = () => {
     try {
       const url = "http://localhost:3100/api/auth";
       const { data: res } = await axios.post(url, data);
-      localStorage.setItem("token", res.data);
-      localStorage.setItem("user", JSON.stringify({ userId: res.data.userId, email: res.data.email }));
-      window.location = "/";
+
+      // Save user info and token to localStorage
+      const { token, userId, email, firstName, lastName } = res.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ userId, email, firstName, lastName }));
+
+      window.location = "/"; // Redirect to the homepage after successful login
     } catch (error) {
       if (
         error.response &&

@@ -17,18 +17,28 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user)); // Store user data in localStorage
     } else {
       localStorage.removeItem('user');
     }
   }, [user]);
 
   const login = (userDetails, token) => {
-    setUser(userDetails);
-    localStorage.setItem('token', token); // Optionally store token separately
+    // Deconstruct user details (firstName, lastName, email, userId)
+    const { firstName, lastName, email, userId } = userDetails;
+
+    // Update state with user details
+    setUser({ firstName, lastName, email, userId });
+
+    // Store token separately in localStorage
+    localStorage.setItem('token', token);
+
+    // Store user details in localStorage
+    localStorage.setItem('user', JSON.stringify({ firstName, lastName, email, userId }));
   };
 
   const logout = () => {
+    // Clear user data and token
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
