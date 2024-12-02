@@ -20,18 +20,99 @@ import {
 
 export default function RecipeDiscovery() {
   const [recipes, setRecipes] = useState([]);
+  const [originalRecipes, setOriginalRecipes] = useState([]); // Store original unfiltered recipes
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const [cookingTime, setCookingTime] = useState([]);
+  const [mealType, setMealType] = useState([]);
+  const [ingredientsCount, setIngredientsCount] = useState([]);
+  const [dietPreference, setDietPreference] = useState([]);
+
+  // Comprehensive filter function
+  const applyAllFilters = (recipesToFilter) => {
+    let filteredRecipes = recipesToFilter;
+
+    // Ingredient Count Filter
+    if (ingredientsCount.length > 0) {
+      filteredRecipes = filteredRecipes.filter((recipe) => {
+        const ingredientCount = recipe.extendedIngredients?.length || 0;
+        return ingredientsCount.some(range => {
+          switch(range) {
+            case '< 5':
+              return ingredientCount < 5;
+            case '5 - 10':
+              return ingredientCount >= 5 && ingredientCount <= 10;
+            case '10 - 20':
+              return ingredientCount > 10 && ingredientCount <= 20;
+            case '20 - 30':
+              return ingredientCount > 20 && ingredientCount <= 30;
+            case '30 - 40':
+              return ingredientCount > 30 && ingredientCount <= 40;
+            default:
+              return false;
+          }
+        });
+      });
+    }
+
+    // Cooking Time Filter
+    if (cookingTime.length > 0) {
+      filteredRecipes = filteredRecipes.filter((recipe) => {
+        const minutes = recipe.readyInMinutes;
+        return cookingTime.some(time => {
+          switch(time) {
+            case '< 10 minutes':
+              return minutes < 10;
+            case '10 - 20 minutes':
+              return minutes >= 10 && minutes <= 20;
+            case '20 - 40 minutes':
+              return minutes > 20 && minutes <= 40;
+            case '40 - 60 minutes':
+              return minutes > 40 && minutes <= 60;
+            case '> 60 minutes':
+              return minutes > 60;
+            default:
+              return false;
+          }
+        });
+      });
+    }
+
+    // Meal Type Filter
+    if (mealType.length > 0) {
+      filteredRecipes = filteredRecipes.filter((recipe) => {
+        const dishTypes = recipe.dishTypes || [];
+        return mealType.some((meal) => 
+          dishTypes.includes(meal.toLowerCase())
+        );
+      });
+    }
+
+    // Diet Preference Filter
+    if (dietPreference.length > 0) {
+      filteredRecipes = filteredRecipes.filter((recipe) => {
+        return dietPreference.some(diet => {
+          // Adjust this logic based on how diet info is stored in your recipe object
+          return recipe.diets?.some(recipeDiet => 
+            recipeDiet.toLowerCase().includes(diet.toLowerCase())
+          );
+        });
+      });
+    }
+
+    setRecipes(filteredRecipes);
+  };
 
   const fetchRecipes = async (query, pageNumber) => {
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch(
-        `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=${pageNumber}`,
+        http://localhost:3100/api/recipes/search?searchTerm=${query}&page=${pageNumber},
         {
           method: "GET",
           headers: {
@@ -45,7 +126,8 @@ export default function RecipeDiscovery() {
       }
 
       const data = await response.json();
-      setRecipes(data || []); // Ensure data is properly set
+      setOriginalRecipes(data); // Store original recipes
+      setRecipes(data); // Initially set all recipes
     } catch (err) {
       setError("An error occurred while fetching recipes. Please try again.");
       console.error("Error fetching recipes:", err);
@@ -60,7 +142,7 @@ export default function RecipeDiscovery() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setPage(1); // Reset page for new search
+    setPage(1);
     fetchRecipes(searchQuery, 1);
   };
 
@@ -71,7 +153,43 @@ export default function RecipeDiscovery() {
   };
 
   const handleRecipeClick = (recipeId) => {
-    navigate(`/recipe/${recipeId}`);
+    navigate(/recipe/${recipeId});
+  };
+
+  const handleCookingTimeChange = (time) => {
+    setCookingTime((prev) =>
+      prev.includes(time)
+        ? prev.filter((item) => item !== time)
+        : [...prev, time]
+    );
+  };
+
+  const handleMealTypeChange = (meal) => {
+    setMealType((prev) =>
+      prev.includes(meal) ? prev.filter((item) => item !== meal) : [...prev, meal]
+    );
+  };
+
+  const handleIngredientsCountChange = (count) => {
+    setIngredientsCount((prev) =>
+      prev.includes(count)
+        ? prev.filter((item) => item !== count)
+        : [...prev, count]
+    );
+  };
+
+  const handleDietPreferenceChange = (diet) => {
+    setDietPreference((prev) =>
+      prev.includes(diet)
+        ? prev.filter((item) => item !== diet)
+        : [...prev, diet]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    if (originalRecipes.length > 0) {
+      applyAllFilters(originalRecipes);
+    }
   };
 
   return (
@@ -106,24 +224,13 @@ export default function RecipeDiscovery() {
                     "> 60 minutes",
                   ].map((time) => (
                     <label key={time} className="flex items-center space-x-2">
-                      <Checkbox />
+                      <input
+                        type="checkbox"
+                        checked={cookingTime.includes(time)}
+                        onChange={() => handleCookingTimeChange(time)}
+                        className="h-4 w-4"
+                      />
                       <span className="text-sm">{time}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cuisine Type */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Cuisine Type</span>
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-                <div className="space-y-2">
-                  {['Indian', 'Italian', 'Asian', 'Mediterrian', 'American'].map((cuisine) => (
-                    <label key={cuisine} className="flex items-center space-x-2">
-                      <Checkbox />
-                      <span className="text-sm">{cuisine}</span>
                     </label>
                   ))}
                 </div>
@@ -138,7 +245,12 @@ export default function RecipeDiscovery() {
                 <div className="space-y-2">
                   {['Breakfast', 'Lunch', 'Snack', 'Dinner', 'Drinks', 'Desserts'].map((meal) => (
                     <label key={meal} className="flex items-center space-x-2">
-                      <Checkbox />
+                      <input
+                        type="checkbox"
+                        checked={mealType.includes(meal)}
+                        onChange={() => handleMealTypeChange(meal)}
+                         className="h-4 w-4"
+                      />
                       <span className="text-sm">{meal}</span>
                     </label>
                   ))}
@@ -154,7 +266,12 @@ export default function RecipeDiscovery() {
                 <div className="space-y-2">
                   {['< 5', '5 - 10', '10 - 20', '20 - 30', '30 - 40'].map((count) => (
                     <label key={count} className="flex items-center space-x-2">
-                      <Checkbox />
+                      <input
+                        type="checkbox"
+                        checked={ingredientsCount.includes(count)}
+                        onChange={() => handleIngredientsCountChange(count)}
+                        className="h-4 w-4"
+                      />
                       <span className="text-sm">{count}</span>
                     </label>
                   ))}
@@ -170,16 +287,27 @@ export default function RecipeDiscovery() {
                 <div className="space-y-2">
                   {['Vegetarian', 'Non-Vegetarian', 'Vegan', 'gluten-free', 'Protein'].map((diet) => (
                     <label key={diet} className="flex items-center space-x-2">
-                      <Checkbox />
+                      <input
+                        type="checkbox"
+                        checked={dietPreference.includes(diet)}
+                        onChange={() => handleDietPreferenceChange(diet)}
+                        className="h-4 w-4"
+                      />
                       <span className="text-sm">{diet}</span>
                     </label>
                   ))}
                 </div>
               </div>
+
             </div>
           </ScrollArea>
 
-          <Button className="w-full mt-4">Apply Filters</Button>
+          <Button
+            className="w-full mt-4"
+            onClick={handleApplyFilters}
+          >
+            Apply Filters
+          </Button>
         </aside>
 
         {/* Main Content */}
@@ -224,7 +352,7 @@ export default function RecipeDiscovery() {
                         className="text-sm text-gray-600 mb-4"
                         dangerouslySetInnerHTML={{
                           __html: recipe.summary
-                            ? `${recipe.summary.split(" ").slice(0, 10).join(" ")}...`
+                            ? ${recipe.summary.split(" ").slice(0, 10).join(" ")}...
                             : "No description available.",
                         }}
                       ></p>
