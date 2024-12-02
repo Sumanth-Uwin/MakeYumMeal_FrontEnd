@@ -26,7 +26,7 @@ const ShoppingList = () => {
                 return;
             }
             try {
-                const response = await axios.get(http://localhost:3100/api/shoppingList/${user.userId});
+                const response = await axios.get(`http://localhost:3100/api/shoppingList/${user.userId}`);
                 setItems(response.data.items);
                 setLoading(false);
             } catch (err) {

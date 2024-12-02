@@ -112,7 +112,7 @@ export default function RecipeDiscovery() {
 
     try {
       const response = await fetch(
-        http://localhost:3100/api/recipes/search?searchTerm=${query}&page=${pageNumber},
+        `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=${pageNumber}`,
         {
           method: "GET",
           headers: {
@@ -153,7 +153,7 @@ export default function RecipeDiscovery() {
   };
 
   const handleRecipeClick = (recipeId) => {
-    navigate(/recipe/${recipeId});
+    navigate(`/recipe/${recipeId}`);
   };
 
   const handleCookingTimeChange = (time) => {
@@ -352,7 +352,7 @@ export default function RecipeDiscovery() {
                         className="text-sm text-gray-600 mb-4"
                         dangerouslySetInnerHTML={{
                           __html: recipe.summary
-                            ? ${recipe.summary.split(" ").slice(0, 10).join(" ")}...
+                            ? `${recipe.summary.split(" ").slice(0, 10).join(" ")}...`
                             : "No description available.",
                         }}
                       ></p>
