@@ -6,6 +6,7 @@ import Footer from "../../components/Footer/Footer";
 import { png1, png2, png3, png4 } from "../../index";
 import SearchBar from "../../components/Search/SearchBar";
 import SearchResults from "../../components/Search/SearchResults";
+import { useUser } from '../../UserContext'; 
 
 const Main = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -13,21 +14,33 @@ const Main = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  //const API_KEY = 'c7be5e80b9d74f42a80086a83b8305fd'; // Replace with your actual API key
-  const API_KEY='b742e43802e749a0a94080a6c28a269a';
+  const { user } = useUser();
+
+  const apiKeys = [
+    process.env.REACT_APP_SPOONACULAR_KEY1,
+    process.env.REACT_APP_SPOONACULAR_KEY2,
+    process.env.REACT_APP_SPOONACULAR_KEY3,
+    process.env.REACT_APP_SPOONACULAR_KEY4,
+    process.env.REACT_APP_SPOONACULAR_KEY5,
+    process.env.REACT_APP_SPOONACULAR_KEY6,
+    process.env.REACT_APP_SPOONACULAR_KEY7,
+    process.env.REACT_APP_SPOONACULAR_KEY8
+  ];
+  const defaultRecipes = [
+    { id: 1, title: "Recipe 1", image: "default-image.jpg", summary: "This is a default recipe." },
+    { id: 2, title: "Recipe 2", image: "default-image.jpg", summary: "This is another default recipe." },
+    console.log(user)
+    // Add more default recipes as needed
+  ];
 
   // Function to handle search and update results
   const handleSearchResults = async (query) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=1`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch search results");
-      }
-      const data = await response.json();
+      const url = `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=1`;
+      const data = await fetchWithMultipleKeys(url);
+      
       if (data.message) {
         setError(data.message); // No recipes found
         setSearchResults([]);
@@ -46,27 +59,87 @@ const Main = () => {
     navigate(`/recipe/${recipeId}`);
   };
 
+  // Function to check if an API key is working
+  const fetchWithApiKey = async (url, apiKey) => {
+    try {
+      // Pass the API key as a query parameter
+      const response = await fetch(`${url}&apiKey=${apiKey}`); // Append the apiKey to the URL
+      const data = await response.json();
+  
+      // Check if the API limit is reached
+      if (data.code === 402) {
+        throw new Error("API limit reached");
+      }
+  
+      return data;
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+      throw error;
+    }
+  };
+  
+
+  // Function to try multiple API keys
+  // Function to try multiple API keys
+  const fetchWithMultipleKeys = async (url) => {
+    let triedKeys = new Set(); // Track tried keys to prevent retrying exhausted ones
+  
+    while (triedKeys.size < apiKeys.length) {
+      for (let key of apiKeys) {
+        // Skip the keys we've already tried
+        if (triedKeys.has(key)) {
+          continue;
+        }
+  
+        try {
+          const data = await fetchWithApiKey(url, key); // Try fetching with the current API key
+          return data; // If successful, return the data immediately
+        } catch (error) {
+          if (error.message === "API limit reached") {
+            console.log(`API limit reached for key: ${key}. Trying next key.`);
+            triedKeys.add(key); // Mark this key as exhausted
+            continue; // Try the next key if this one is rate-limited
+          } else {
+            // If there's another error, we throw it and stop
+            throw error;
+          }
+        }
+      }
+    }
+  
+    throw new Error("All API keys exhausted."); // If all keys fail, throw an error
+  };
+  
+
+
   useEffect(() => {
     const fetchTrendingRecipes = async () => {
       try {
-        const response = await fetch(
-          `https://api.spoonacular.com/recipes/random?number=5&apiKey=${API_KEY}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch trending recipes");
+        const url = `https://api.spoonacular.com/recipes/random?number=5`; // Base URL for random recipes
+        const data = await fetchWithMultipleKeys(url); // Use the updated fetch function
+  
+        console.log("Trending Recipes Data:", data);
+  
+        // If the data is valid, set it; otherwise, fallback to default data
+        if (data && data.recipes) {
+          setTrendingRecipes(data.recipes);
+        } else {
+          setTrendingRecipes(defaultRecipes); // Fallback to default data
+          setError("Failed to load trending recipes from the API. Using default data.");
         }
-        const data = await response.json();
-        setTrendingRecipes(data.recipes);
       } catch (err) {
         console.error("Error fetching trending recipes:", err);
-        setError("Failed to load trending recipes. Please try again later.");
+        setTrendingRecipes(defaultRecipes); // Fallback to default data in case of error
+        setError("Failed to load trending recipes. Using default data.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchTrendingRecipes();
   }, []);
+  
+  
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -83,7 +156,7 @@ const Main = () => {
                 Effortless Meal Planning & Grocery Management
               </h1>
               <div className="flex justify-center space-x-2 mb-4">
-              <SearchBar onSearchResults={(results) => setSearchResults(results)} />
+                <SearchBar onSearchResults={(results) => setSearchResults(results)} />
               </div>
               {loading && <p>Loading search results...</p>}
               {error && <p className="text-red-500">{error}</p>}
@@ -100,13 +173,13 @@ const Main = () => {
               {
                 title: "Step 1",
                 description:
-                  "Customize your meal plan. Add recipes and schedule your meals with ease.",
+                  "Browse recipes and select ingredients. Your perfect meal is just a click away.",
                 image: png3,
               },
               {
                 title: "Step 2",
                 description:
-                  "Browse recipes and select ingredients. Your perfect meal is just a click away.",
+                   "Customize your meal plan. Add recipes and schedule your meals with ease.",
                 image: png2,
               },
               {
