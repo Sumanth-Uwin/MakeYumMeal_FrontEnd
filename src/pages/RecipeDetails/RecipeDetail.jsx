@@ -59,7 +59,7 @@ const RecipeDetail = () => {
   const speechSynthesisRef = useRef(null);
   const { user } = useUser(); // Get user from context
   const loggedInUserId = user?.userId; // Get logged-in user ID
-
+  
   // Fetch recipe data
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -118,10 +118,10 @@ const RecipeDetail = () => {
 
     if (preparationSteps) {
       const utterance = new SpeechSynthesisUtterance(preparationSteps);
-
+      
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
-
+      
       speechSynthesisRef.current = window.speechSynthesis;
       window.speechSynthesis.speak(utterance);
     }
@@ -137,21 +137,13 @@ const RecipeDetail = () => {
   // Save recipe to the user's list
   const handleSaveRecipe = async () => {
     try {
-      const selectedItems = recipe.extendedIngredients.filter((ingredient) =>
-        selectedIngredients.includes(ingredient.id)
-      );
-
-      // Prepare the selected ingredients in the required format
-      const formattedIngredients = selectedItems.map((ingredient) => ({
-        name: ingredient.original,
-        quantity: 1,
-        ingredientId: ingredient.id,
-      }));
-
-      // Post the request to the backend
-      const response = await axios.post("http://localhost:3100/api/shoppingList/add", {
-        userId: loggedInUserId, // Ensure this is the actual logged-in user's ID
-        selectedIngredients: formattedIngredients,
+      const response = await axios.post("http://localhost:3100/api/recipes/save", {
+        userId: loggedInUserId,
+        recipeId: id,
+        title: recipe.title,
+        image: recipe.image,
+        ingredients: recipe.extendedIngredients,
+        instructions: recipe.analyzedInstructions,
       });
 
       if (response.status === 200) {
@@ -176,19 +168,19 @@ const RecipeDetail = () => {
         alert("You must be logged in to save notes.");
         return;
       }
-
+  
       const userId = loggedInUserId;
-
+  
       const response = await axios.post("http://localhost:3100/api/notes/create", {
         recipeId: id,
         title: recipe.title,
         content: notes,
         userId: userId,
       });
-
+  
       if (response.status === 200 || response.status === 201) {
         alert("Notes saved successfully!");
-
+  
         // Delay closing the popup to allow the alert to appear first
         setTimeout(() => {
           setIsNotesOpen(false); // Close the notes popup
@@ -199,7 +191,7 @@ const RecipeDetail = () => {
       alert("Failed to save notes. Please try again.");
     }
   };
-
+  
 
   if (loading) return <p>Loading...</p>;
   if (!recipe) return <p>No recipe found.</p>;
@@ -208,29 +200,29 @@ const RecipeDetail = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
+      
       <div className="flex-1 p-6 max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">{recipe.title}</h1>
           <div className="flex gap-4">
-            <Button
-              variant="outline"
+            <Button 
+              variant="outline" 
               className="flex items-center gap-2"
               onClick={handleSaveRecipe} // Save recipe button
             >
               <BookmarkIcon className="w-4 h-4" />
               {saved ? "Saved" : "Save Recipe"}
             </Button>
-            <Button
-              variant="secondary"
+            <Button 
+              variant="secondary" 
               className="flex items-center gap-2"
               onClick={handleNotesToggle} // Open notes popup
             >
               <FileTextIcon className="w-4 h-4" />
               Notes
             </Button>
-            <Button
-              variant={isSpeaking ? "destructive" : "secondary"}
+            <Button 
+              variant={isSpeaking ? "destructive" : "secondary"} 
               className="flex items-center gap-2"
               onClick={isSpeaking ? stopSpeaking : speakPreparationMethod}
             >
@@ -250,9 +242,9 @@ const RecipeDetail = () => {
         </div>
 
         <Card className="mb-8">
-          <img
-            src={recipe.image}
-            alt={recipe.title}
+          <img 
+            src={recipe.image} 
+            alt={recipe.title} 
             className="w-full h-64 object-cover rounded-t-lg"
           />
         </Card>
@@ -327,10 +319,10 @@ const RecipeDetail = () => {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4">Nutrition Facts</h2>
           <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: recipe.summary }} />
-        </div>
+      </div>
 
       {/* Notes Popup */}
-        {isNotesOpen && (
+      {isNotesOpen && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg w-96">
               <h2 className="text-xl font-semibold mb-4">Add Notes</h2>
@@ -345,8 +337,8 @@ const RecipeDetail = () => {
                   variant="outline"
                   onClick={handleNotesToggle} // Close notes popup
                 >
-                  Cancel
-                </Button>
+                Cancel
+              </Button>
                 <Button variant="primary" onClick={handleSaveNotes}>
                   Save Notes
                 </Button>
