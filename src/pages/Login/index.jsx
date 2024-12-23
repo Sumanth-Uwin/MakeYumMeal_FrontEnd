@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://localhost:3100/api/auth";
+      const url = "https://makeyummeal-backend.onrender.com/api/auth";
       const { data: res } = await axios.post(url, data);
 
       // Save user info and token to localStorage

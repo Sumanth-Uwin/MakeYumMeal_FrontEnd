@@ -26,7 +26,7 @@ const ShoppingList = () => {
                 return;
             }
             try {
-                const response = await axios.get(`http://localhost:3100/api/shoppingList/${user.userId}`);
+                const response = await axios.get(`https://makeyummeal-backend.onrender.com/api/shoppingList/${user.userId}`);
                 setItems(response.data.items);
                 setLoading(false);
             } catch (err) {
@@ -42,7 +42,7 @@ const ShoppingList = () => {
         if (newItem.trim()) {
             setIsAdding(true);
             try {
-                const response = await axios.post('http://localhost:3100/api/shoppingList/add', {
+                const response = await axios.post('https://makeyummeal-backend.onrender.com/api/shoppingList/add', {
                     userId: user.userId,
                     selectedIngredients: [{
                         name: newItem,
@@ -72,7 +72,7 @@ const ShoppingList = () => {
             const updatedItems = items.filter(item => item.ingredientId !== id);
             setItems(updatedItems);
 
-            await axios.delete('http://localhost:3100/api/shoppingList/remove', {
+            await axios.delete('https://makeyummeal-backend.onrender.com/api/shoppingList/remove', {
                 data: {
                     userId: user.userId,
                     ingredientId: id
@@ -96,7 +96,7 @@ const ShoppingList = () => {
         setItems(updatedItems);
 
         try {
-            await axios.put('http://localhost:3100/api/shoppingList/update', {
+            await axios.put('https://makeyummeal-backend.onrender.com/api/shoppingList/update', {
                 userId: user.userId,
                 ingredientId: id,
                 quantity: updatedItems.find(item => item.ingredientId === id).quantity
@@ -151,7 +151,7 @@ const ShoppingList = () => {
 
             // Batch delete from backend
             await Promise.all(selectedIds.map(id =>
-                axios.delete('http://localhost:3100/api/shoppingList/remove', {
+                axios.delete('https://makeyummeal-backend.onrender.com/api/shoppingList/remove', {
                     data: {
                         userId: user.userId,
                         ingredientId: id
@@ -177,7 +177,7 @@ const ShoppingList = () => {
         try {
             const selectedItems = items.filter(item => selectedIngredients[item.ingredientId]);
 
-            await axios.post("http://localhost:3100/api/shoppingList/add", {
+            await axios.post("https://makeyummeal-backend.onrender.com/api/shoppingList/add", {
                 userId: user.userId,
                 selectedIngredients: selectedItems.map(item => ({
                     name: item.name,

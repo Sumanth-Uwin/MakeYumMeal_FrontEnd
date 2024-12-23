@@ -95,7 +95,7 @@ const RecipeDetail = () => {
       }));
 
       // Post the request to the backend
-      const response = await axios.post("http://localhost:3100/api/shoppingList/add", {
+      const response = await axios.post("https://makeyummeal-backend.onrender.com/api/shoppingList/add", {
         userId: loggedInUserId, // Ensure this is the actual logged-in user's ID
         selectedIngredients: formattedIngredients,
       });
@@ -137,7 +137,7 @@ const RecipeDetail = () => {
   // Save recipe to the user's list
   const handleSaveRecipe = async () => {
     try {
-      const response = await axios.post("http://localhost:3100/api/recipes/save", {
+      const response = await axios.post("https://makeyummeal-backend.onrender.com/api/recipes/save", {
         userId: loggedInUserId,
         recipeId: id,
         title: recipe.title,
@@ -171,7 +171,7 @@ const RecipeDetail = () => {
   
       const userId = loggedInUserId;
   
-      const response = await axios.post("http://localhost:3100/api/notes/create", {
+      const response = await axios.post("https://makeyummeal-backend.onrender.com/api/notes/create", {
         recipeId: id,
         title: recipe.title,
         content: notes,

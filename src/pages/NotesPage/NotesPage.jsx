@@ -22,7 +22,7 @@ const NotesPage = () => {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get(`http://localhost:3100/api/notes/${loggedInUserId}`);
+        const response = await axios.get(`https://makeyummeal-backend.onrender.com/api/notes/${loggedInUserId}`);
         setNotes(response.data); // Assuming response.data contains the notes
 
       } catch (error) {
@@ -40,7 +40,7 @@ const NotesPage = () => {
 
   const handleDeleteNote = async (noteId) => {
     try {
-      const response = await axios.delete(`http://localhost:3100/api/notes/${noteId}`);
+      const response = await axios.delete(`https://makeyummeal-backend.onrender.com/api/notes/${noteId}`);
       if (response.status === 200) {
         setNotes(notes.filter(note => note._id !== noteId)); // Remove deleted note from the list
         alert("Note deleted successfully!");

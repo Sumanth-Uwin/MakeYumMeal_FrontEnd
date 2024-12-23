@@ -11,7 +11,7 @@ function SearchBar({ onSearchResults }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3100/api/recipes/search?searchTerm=${query}&page=1`, {
+      const response = await fetch(`https://makeyummeal-backend.onrender.com/api/recipes/search?searchTerm=${query}&page=1`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

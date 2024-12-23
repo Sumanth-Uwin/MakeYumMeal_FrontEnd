@@ -24,7 +24,7 @@ const SavedRecipes = () => {
 
             try {
                 console.log("Fetching saved recipes for user ID:", loggedInUserId);
-                const response = await fetch(`http://localhost:3100/api/recipes?userId=${loggedInUserId}`, {
+                const response = await fetch(`https://makeyummeal-backend.onrender.com/api/recipes?userId=${loggedInUserId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const SavedRecipes = () => {
         if (!loggedInUserId) return;
 
         try {
-            const response = await fetch(`http://localhost:3100/api/recipes/${recipeId}?userId=${loggedInUserId}`, {
+            const response = await fetch(`https://makeyummeal-backend.onrender.com/api/recipes/${recipeId}?userId=${loggedInUserId}`, {
                 method: 'DELETE', // Changed to DELETE method
             });
             if (response.ok) {

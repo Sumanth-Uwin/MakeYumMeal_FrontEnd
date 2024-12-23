@@ -38,7 +38,7 @@ const Main = () => {
     setLoading(true);
     setError(null);
     try {
-      const url = `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=1`;
+      const url = `https://makeyummeal-backend.onrender.com/api/recipes/search?searchTerm=${query}&page=1`;
       const data = await fetchWithMultipleKeys(url);
       
       if (data.message) {

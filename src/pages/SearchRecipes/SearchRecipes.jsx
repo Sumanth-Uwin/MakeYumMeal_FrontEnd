@@ -112,7 +112,7 @@ export default function RecipeDiscovery() {
 
     try {
       const response = await fetch(
-        `http://localhost:3100/api/recipes/search?searchTerm=${query}&page=${pageNumber}`,
+        `https://makeyummeal-backend.onrender.com/api/recipes/search?searchTerm=${query}&page=${pageNumber}`,
         {
           method: "GET",
           headers: {
